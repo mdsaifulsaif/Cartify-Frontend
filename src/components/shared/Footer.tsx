@@ -1,19 +1,52 @@
 "use client"
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
 import {
   IoLogoInstagram,
   IoLogoFacebook,
   IoLogoTwitter,
 } from "react-icons/io5";
+import { BASE_URL } from "@/helper/BASE_URL";
 
-const Footer = () => {
-  const currentYear = new Date().getFullYear();
+const Footer: React.FC = () => {
+  const currentYear: number = new Date().getFullYear();
+  const [email, setEmail] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!email) {
+      toast.error("Please provide a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // আপনার API এন্ডপয়েন্ট অনুযায়ী URL টি পরিবর্তন করে নিন
+      const response = await axios.post(`${BASE_URL}/subscribers/add`, {
+        email: email,
+      });
+
+      if (response.data.success) {
+        toast.success("Thank you for subscribing!");
+        setEmail("");
+      }
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Something went wrong!";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <footer className="bg-white border-t border-gray-100 pt-16 pb-8">
+      <Toaster position="bottom-right" reverseOrder={false} />
       <div className="container mx-auto px-4 ">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* ১. ব্র্যান্ড ইনফো */}
@@ -53,7 +86,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* ২. কুইক লিংকস */}
+          {/* ২. শপ লিঙ্কস */}
           <div>
             <h4 className="section-title !text-[12px] uppercase tracking-[0.2em] mb-6">
               Shop
@@ -94,7 +127,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* ৩. কাস্টমার সাপোর্ট */}
+          {/* ৩. সাপোর্ট লিঙ্কস */}
           <div>
             <h4 className="section-title !text-[12px] uppercase tracking-[0.2em] mb-6">
               Support
@@ -143,24 +176,30 @@ const Footer = () => {
             <p className="text-[12px] text-gray-400 mb-5 leading-relaxed">
               Subscribe to get special offers and once-in-a-lifetime deals.
             </p>
-            <form
-              className="flex flex-col gap-3"
-              onSubmit={(e) => e.preventDefault()}
-            >
+            <form className="flex flex-col gap-3" onSubmit={handleSubscribe}>
               <input
                 type="email"
+                value={email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value)
+                }
                 placeholder="Your email address"
+                required
                 className="bg-gray-50 border border-gray-100 p-3.5 text-[12px] focus:outline-none focus:border-black transition-colors rounded-sm"
               />
-              {/* globals.css থেকে global-btn ক্লাস ব্যবহার করা হয়েছে */}
-              <button className="global-btn !py-3 !text-[10px] !rounded-sm">
-                Subscribe
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="global-btn !py-3 !text-[10px] !rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Subscribing..." : "Subscribe"}
               </button>
             </form>
           </div>
         </div>
 
-        {/* বটম সেকশন */}
+        {/* ফুটার বটম */}
         <div className="border-t border-gray-50 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[10px] text-gray-400 uppercase tracking-[0.15em] font-medium">
             © {currentYear} Glowly. All rights reserved.

@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-
 import { IoArrowForwardOutline } from "react-icons/io5";
-import ProductCard from "@/components/shared/ProductCard";
+
+import ProductCard from "@/components/shared/ProductCard"; 
 import { BASE_URL } from "@/helper/BASE_URL";
 
 
@@ -14,6 +14,7 @@ interface IProduct {
   name: string;
   thumbnail: string;
   salePrice: number;
+  isNew?: boolean;
   isBestseller?: boolean;
   categoryID?: {
     name: string;
@@ -22,52 +23,56 @@ interface IProduct {
   reviews?: number;
 }
 
-function BestSellers() {
- 
+const Handpicked: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchBestSellers = async () => {
+    const fetchHandpicked = async () => {
       try {
         setLoading(true);
         const response = await axios.get(`${BASE_URL}/products`);
+
+        if (response.data.success) {
+   
+          const allData: IProduct[] = response.data.data || response.data.products || [];
+
+          if (allData.length > 0) {
+          
+            let filtered = allData.filter((item) => item.isNew === true);
+
         
+            const sourceData = filtered.length >= 4 ? filtered : allData;
 
-        const allData: IProduct[] = response.data?.products || response.data?.data || [];
+          
+            const shuffled = [...sourceData]
+              .sort(() => 0.5 - Math.random())
+              .slice(0, 4);
 
-        if (allData.length > 0) {
-          let filtered = allData.filter((item) => item.isBestseller === true);
-
-          if (filtered.length < 4) {
-            filtered = allData;
+            setProducts(shuffled);
           }
-
-          const randomFour = [...filtered]
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 4);
-
-          setProducts(randomFour);
         }
       } catch (error: any) {
-        console.error("Fetch Error:", error.message);
+        console.error("Error fetching products:", error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBestSellers();
+    fetchHandpicked();
   }, []);
 
   return (
-    <section className="py-16 md:py-24 bg-white">
-      <div className="container mx-auto px-4 md:px-8">
+    <section className="mt-16 mb-20">
+      <div className="container mx-auto px-4">
         
-        {/* Header Section */}
+      
+
+          {/* Header Section */}
         <div className="flex flex-col md:flex-row items-baseline md:items-end justify-between gap-4 mb-12">
           <div>
             <h2 className="section-title">
-              Bestsellers
+                   Hand picked for you
             </h2>
             <p className="content-text !text-[14px] mt-2 max-w-md">
               Our community's most-loved Korean skincare essentials.
@@ -83,28 +88,31 @@ function BestSellers() {
           </Link>
         </div>
 
-        {/* Grid Section */}
+        {/* Product Grid */}
         {loading ? (
-          <div className="product-grid">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-gray-50 aspect-square rounded-sm mb-4"></div>
-                <div className="h-3 bg-gray-50 w-1/4 mb-3"></div>
-                <div className="h-4 bg-gray-50 w-3/4 mb-2"></div>
-                <div className="h-6 bg-gray-50 w-1/2"></div>
+              <div key={i} className="flex flex-col gap-4">
+                <div className="aspect-[3/4] bg-gray-100 animate-pulse rounded-sm"></div>
+                <div className="space-y-2">
+                  <div className="h-4 bg-gray-100 animate-pulse w-3/4"></div>
+                  <div className="h-4 bg-gray-100 animate-pulse w-1/2"></div>
+                </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="product-grid">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
             {products.length > 0 ? (
               products.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))
             ) : (
-              <p className="col-span-full text-center text-gray-400 py-10 uppercase text-[11px] tracking-widest">
-                No bestsellers found at the moment.
-              </p>
+              <div className="col-span-full text-center py-20 border border-dashed border-gray-100 rounded-lg">
+                <p className="text-gray-400 uppercase text-[10px] font-bold tracking-[0.25em]">
+                  No products available right now.
+                </p>
+              </div>
             )}
           </div>
         )}
@@ -113,4 +121,4 @@ function BestSellers() {
   );
 }
 
-export default BestSellers;
+export default Handpicked;

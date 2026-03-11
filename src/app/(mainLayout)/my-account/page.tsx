@@ -12,6 +12,7 @@ import { BASE_URL } from "@/helper/BASE_URL";
 import LoadingPage from "@/components/shared/LoadingPage";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const MyAccountPage = () => {
   const router = useRouter();
@@ -168,7 +169,9 @@ const MyAccountPage = () => {
     "bg-black text-white px-8 py-3 rounded-md text-[10px] font-bold uppercase tracking-widest hover:opacity-80 transition-opacity disabled:bg-gray-400";
 
   return (
-    <div className="bg-white min-h-screen py-10 md:py-20 font-raleway text-[#1A1A1A]">
+   
+    <ProtectedRoute allowRoles={["user", "admin"]}>
+ <div className="bg-white min-h-screen py-10 md:py-20 font-raleway text-[#1A1A1A]">
       <div className="max-w-6xl mx-auto px-6">
         <header className="mb-10">
           <h1 className="text-4xl font-medium mb-1 italic">My Account</h1>
@@ -494,6 +497,8 @@ const MyAccountPage = () => {
         )}
       </div>
     </div>
+
+    </ProtectedRoute>
   );
 };
 

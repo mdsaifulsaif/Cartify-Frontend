@@ -12,6 +12,7 @@ import { useParams } from "next/navigation";
 
 import Link from "next/link";
 import Image from "next/image";
+import Handpicked from "../_components/Handpicked ";
 
 
 interface IProduct {
@@ -225,7 +226,7 @@ const ProductDetails = () => {
                         rows={4}
                         required
                       />
-                      <button type="submit" className="global-btn !w-full !py-3 !text-[11px] !rounded-xl">Post Review</button>
+                      <button type="submit" className="global-btn !py-3 !text-[10px] !rounded-sm w-full">Post Review</button>
                    </form>
                 ) : (
                    <div className="bg-black text-white p-6 rounded-2xl">
@@ -266,7 +267,7 @@ const ProductDetails = () => {
         </div>
 
         <div className="mt-24">
-           {/* <Handpicked /> */}
+           <Handpicked />
         </div>
       </div>
     </div>

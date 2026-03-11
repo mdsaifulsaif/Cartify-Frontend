@@ -7,10 +7,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/helper/BASE_URL";
 import toast from "react-hot-toast";
-import { useAuth } from "@/context/authContext"; // ১. useAuth ইমপোর্ট করো
+import { useAuth } from "@/context/authContext";
 
 const Login = () => {
-  const { loginUser } = useAuth(); // ২. loginUser ফাংশনটি বের করে নাও
+  const { loginUser } = useAuth();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -28,6 +28,39 @@ const Login = () => {
     }));
   };
 
+  // const handleSubmit = async (e: FormEvent) => {
+  //   e.preventDefault();
+
+  //   const loadId = toast.loading("Signing in...");
+
+  //   try {
+  //     const response = await axios.post(`${BASE_URL}/auth/login`, formData, {
+  //       withCredentials: true,
+  //     });
+
+  //     console.log("Login Success Data:", response.data);
+
+  //     if (response.data.success) {
+  //       const userData = response.data.data;
+
+  //       loginUser(userData);
+  //       console.log("login data user ", userData)
+
+  //       toast.success("Login Successful!", { id: loadId });
+
+  //       if (userData?.user.role === "admin") {
+  //         router.push("/dashboard");
+  //       } else {
+  //         router.push("/");
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Login Error:", error);
+  //     const message = error.response?.data?.message || "Login failed!";
+  //     toast.error(message, { id: loadId });
+  //   }
+  // };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -41,19 +74,22 @@ const Login = () => {
       console.log("Login Success Data:", response.data);
 
       if (response.data.success) {
-        const userData = response.data.data;
+        const userData = response.data.data.user;
 
-        // ৩. কনটেক্সট আপডেট করো যাতে সব কম্পোনেন্ট ইউজার ডাটা পায়
+      
         loginUser(userData);
 
+       
         toast.success("Login Successful!", { id: loadId });
 
-        // ৪. রোল অনুযায়ী রিডাইরেক্ট
-        if (userData?.role === "admin") {
-          router.push("/dashboard");
-        } else {
-          router.push("/");
-        }
+     
+        setTimeout(() => {
+          if (userData.role === "admin") {
+            router.push("/dashboard");
+          } else {
+            router.push("/");
+          }
+        }, 350);
       }
     } catch (error: any) {
       console.error("Login Error:", error);
