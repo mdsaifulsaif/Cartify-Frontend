@@ -39,7 +39,7 @@ const MyAccountPage = () => {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // ১. প্রোফাইল ডাটা ফেচ করা
+  // profile data fetch (No changes made here)
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -68,7 +68,7 @@ const MyAccountPage = () => {
     fetchProfile();
   }, []);
 
-  // ২. অর্ডার হিস্ট্রি ফেচ করা
+  // order history fetch
   useEffect(() => {
     if (activeTab === "orders") {
       const fetchOrders = async () => {
@@ -96,7 +96,6 @@ const MyAccountPage = () => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
-  // সবকিছুর জন্য কমন আপডেট ফাংশন
   const handleGeneralUpdate = async (
     type: "profile" | "address" | "password",
   ) => {
@@ -161,7 +160,6 @@ const MyAccountPage = () => {
     }
   };
 
-  // ডিজাইন অনুযায়ী ইনপুট ফিল্ডের স্টাইল
   const inputStyle =
     "w-full border border-[#E5E5E5] p-3 text-sm rounded-md focus:outline-none focus:border-black transition-colors";
   const labelStyle =
@@ -172,13 +170,12 @@ const MyAccountPage = () => {
   return (
     <div className="bg-white min-h-screen py-10 md:py-20 font-raleway text-[#1A1A1A]">
       <div className="max-w-6xl mx-auto px-6">
-        {/* মেইন হেডার */}
         <header className="mb-10">
           <h1 className="text-4xl font-medium mb-1 italic">My Account</h1>
         </header>
 
-        {/* ট্যাব নেভিগেশন (ইমেজ অনুযায়ী) */}
-        <div className="flex gap-4 mb-16 border-b border-gray-100 pb-1">
+        {/* tab navigation */}
+        <div className="flex flex-wrap gap-4 mb-10 md:mb-20 border-b border-gray-100 pb-6">
           <button
             onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
@@ -201,7 +198,7 @@ const MyAccountPage = () => {
           </button>
         </div>
 
-        {/* মেইন কন্টেন্ট এলাকা */}
+        {/* Main Content */}
         {activeTab === "profile" ? (
           <div className="space-y-16 animate-in fade-in duration-500">
             {/* 1. User Information */}
@@ -389,7 +386,6 @@ const MyAccountPage = () => {
               </button>
             </section>
 
-            {/* লগআউট বাটন (ইমেজ অনুযায়ী একদম নিচে) */}
             <div className="pt-8 border-t border-gray-100">
               <button
                 onClick={logoutUser}
@@ -400,24 +396,98 @@ const MyAccountPage = () => {
             </div>
           </div>
         ) : (
-          /* অর্ডার হিস্ট্রি ট্যাব */
-          <div className="space-y-8 animate-in fade-in duration-500">
+          /* --- ORDER HISTORY TAB (Image matching design) --- */
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {orderLoading ? (
               <LoadingPage />
             ) : orders.length > 0 ? (
               orders.map((order: any) => (
                 <div
                   key={order._id}
-                  className="border border-gray-100 rounded-lg p-8 bg-white shadow-sm hover:shadow-md transition-shadow"
+                  className="border border-gray-100 rounded-lg p-6 md:p-10 bg-white shadow-sm hover:shadow-md transition-all duration-300"
                 >
-                  {/* অর্ডার আইটেম ডিজাইন আগের মতোই থাকবে */}
+                  {/* Order Top Info */}
+                  <div className="flex justify-between items-start mb-8">
+                    <div>
+                      <h3 className="text-lg font-bold text-[#1A1A1A] uppercase tracking-tight">
+                        Order ORD-{order._id.slice(-5).toUpperCase()}
+                      </h3>
+                      <p className="text-sm text-gray-400 mt-1 uppercase tracking-widest font-medium">
+                        {new Date(order.createdAt).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[12px] font-bold uppercase text-gray-900 tracking-wider">
+                        {order.status || "Pending"}
+                      </span>
+                      <p className="text-sm text-gray-400 mt-1 uppercase tracking-widest font-medium">
+                        Status
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Product Summary List */}
+                  <div className="space-y-4 mb-10 border-t border-gray-50 pt-8">
+                    {order.cartItems?.map((item: any, idx: number) => {
+                      // API অনুযায়ী price এবং quantity ব্যবহার করা হয়েছে
+                      const itemPrice = Number(item.price) || 0;
+                      const itemQty = Number(item.quantity) || 0;
+                      const itemTotal = itemPrice * itemQty;
+
+                      return (
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center text-sm"
+                        >
+                          <span className="text-gray-600 font-medium">
+                            {item.name}{" "}
+                            <span className="text-gray-400 text-xs ml-2">
+                              x {itemQty}
+                            </span>
+                          </span>
+                          <span className="text-gray-500 font-bold tracking-tight">
+                            ${itemTotal.toFixed(2)}
+                          </span>
+                        </div>
+                      );
+                    })}
+
+                    {/* Total Amount Section */}
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-50 mt-4">
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">
+                        Total Amount
+                      </span>
+                      <span className="text-xl font-bold text-black">
+                        ${(Number(order.totalAmount) || 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* View Details Button */}
+                  <button
+                    onClick={() => router.push(`/order-details/${order._id}`)}
+                    className="w-full border border-gray-200 py-4 rounded-md text-[11px] font-black uppercase tracking-[0.25em] text-gray-800 hover:bg-black hover:text-white hover:border-black transition-all duration-500 shadow-sm"
+                  >
+                    View Order Details
+                  </button>
                 </div>
               ))
             ) : (
-              <div className="text-center py-20 border border-dashed border-gray-100 rounded-lg">
-                <p className="text-gray-400 uppercase text-[11px] font-bold tracking-widest">
-                  No orders found
+              /* Empty State */
+              <div className="text-center py-24 border border-dashed border-gray-200 rounded-xl bg-gray-50/50">
+                <p className="text-gray-400 uppercase text-[11px] font-bold tracking-[0.2em]">
+                  No orders found in your history
                 </p>
+                <button
+                  onClick={() => router.push("/")}
+                  className="mt-6 text-[11px] font-bold uppercase tracking-widest border-b-2 border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition-all"
+                >
+                  Start Shopping
+                </button>
               </div>
             )}
           </div>
