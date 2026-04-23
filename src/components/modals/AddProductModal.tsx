@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
@@ -42,7 +40,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     categoryID: "",
   });
 
-
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
@@ -57,7 +54,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
- 
   const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -65,7 +61,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
       setThumbnailPreview(URL.createObjectURL(file));
     }
   };
-
 
   const handleGalleryChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -76,7 +71,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     }
   };
 
-  
   const removeGalleryImage = (index: number) => {
     setGalleryImages((prev) => prev.filter((_, i) => i !== index));
     setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
@@ -116,12 +110,10 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     setLoading(true);
     const data = new FormData();
 
- 
     Object.entries(formData).forEach(([key, value]) => data.append(key, value));
 
     data.append("thumbnail", thumbnail);
 
-   
     galleryImages.forEach((image) => {
       data.append("images", image);
     });
@@ -377,3 +369,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
 };
 
 export default AddProductModal;
+
+
+
