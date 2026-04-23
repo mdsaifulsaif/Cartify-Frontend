@@ -41,11 +41,12 @@ const FAQ = () => {
   };
 
   return (
-    <section className="w-full py-15 md:py-10 bg-white">
-      <div className="max-w-[1440px] mx-auto grid md:grid-cols-2 gap-10 md:gap-20 items-center px-6 md:px-16">
+      <section className="w-full py-15 md:py-10 bg-white">
+          
+      <div className="container mx-auto grid md:grid-cols-2 md:gap-[130px] items-center">
         
         {/* Left Side: Image Container */}
-        <div className="relative w-full aspect-[0.7] md:aspect-[684/969] overflow-hidden">
+        <div className="relative max-w-177 aspect-[0.7] md:aspect-[684/969] overflow-hidden">
           <Image
             src={bannerfaq}
             alt="Skincare products"
@@ -56,7 +57,7 @@ const FAQ = () => {
         </div>
 
         {/* Right Side: Content */}
-        <div className="flex flex-col pt-4">
+        <div className="flex flex-col pt-4 max-w-177">
           <h2 className="text-[20px] md:text-[32px] font-bold text-[#000000CC] leading-tight mb-4">
             Frequently Asked Questions
           </h2>
@@ -88,7 +89,7 @@ const FAQ = () => {
                     openIndex === i ? "max-h-[500px] pb-8" : "max-h-0"
                   }`}
                 >
-                  <p className="text-[#666666] text-[15px] leading-[1.6] max-w-[580px]">
+                  <p className="text-[#666666] text-[15px] leading-[1.6] ">
                     {item.answer}
                   </p>
                 </div>
