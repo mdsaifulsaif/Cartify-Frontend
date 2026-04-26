@@ -3,6 +3,7 @@ import { Raleway } from "next/font/google";
 import { Toaster } from "react-hot-toast"; //
 import "./globals.css";
 import { AuthProvider } from "@/context/authContext";
+import Providers from "@/context/providers";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -25,10 +26,12 @@ export default function RootLayout({
       <body className={`${raleway.variable} font-sans antialiased`}
       suppressHydrationWarning={true}
       >
-        <AuthProvider>
+       <Providers>
+         <AuthProvider>
           <Toaster position="top-center" reverseOrder={false} />
           {children}
         </AuthProvider>
+       </Providers>
       </body>
     </html>
   );
