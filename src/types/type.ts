@@ -54,3 +54,14 @@ export interface IProduct {
   lowdown?: string[];
   stock: number;
 }
+
+
+
+export interface PrimaryButtonProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  isLoading?: boolean;
+  className?: string; 
+}
