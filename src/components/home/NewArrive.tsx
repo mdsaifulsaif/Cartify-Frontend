@@ -6,7 +6,6 @@ import { IoArrowForwardOutline } from "react-icons/io5";
 import ProductCard from "@/components/shared/ProductCard";
 import { BASE_URL } from "@/helper/BASE_URL";
 
-// ১. টাইপস্ক্রিপ্ট ইন্টারফেস (ProductCard এর সাথে মিল রেখে)
 interface IProduct {
   _id: string;
   name: string;
@@ -22,7 +21,6 @@ interface IProduct {
 }
 
 export default function NewArrive() {
-  // ২. স্টেটে টাইপ ডিফাইন করা
   const [products, setProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -30,29 +28,21 @@ export default function NewArrive() {
     const fetchNewArrivals = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${BASE_URL}/products`);
+
+        const res = await fetch(`${BASE_URL}/products/newProducts`);
         const result = await res.json();
 
         if (result.success) {
-          const allData: IProduct[] = result.data || [];
-          
-          // ৩. সেফলি ফিল্টার করা (আইটেম আছে কি না চেক করে)
-          let filtered = allData.filter((item) => item?.isNew === true);
+          const newData: IProduct[] = result.data || [];
+        
+          const finalProducts = newData.length > 0 
+            ? [...newData].sort(() => 0.5 - Math.random()).slice(0, 4) 
+            : [];
 
-          // যদি ৪টির কম New Arrival থাকে তবে সব ডাটা দেখাবে
-          if (filtered.length < 4) {
-            filtered = allData;
-          }
-
-          // র‍্যান্ডম ৪টি প্রোডাক্ট সিলেক্ট করা
-          const randomFour = [...filtered]
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 4);
-
-          setProducts(randomFour);
+          setProducts(finalProducts);
         }
       } catch (error: any) {
-        console.error("Error:", error.message);
+        console.error("Error fetching new arrivals:", error.message);
       } finally {
         setLoading(false);
       }
@@ -61,6 +51,8 @@ export default function NewArrive() {
     fetchNewArrivals();
   }, []);
 
+  if (loading) return <div>Loading New Arrivals...</div>;
+  if (products.length === 0) return null;
   return (
     <section className="py-16 md:py-24 bg-white font-raleway">
       <div className="container mx-auto px-4 md:px-8 lg:px-12">
@@ -100,7 +92,7 @@ export default function NewArrive() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
             {products.length > 0 ? (
               products.map((product) => (
-                // ৪. লুপের ভেতরে সেফটি চেক (product এবং _id আছে কি না)
+               
                 product && product._id && (
                   <ProductCard key={product._id} product={product} />
                 )
@@ -116,3 +108,4 @@ export default function NewArrive() {
     </section>
   );
 }
+
