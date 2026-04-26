@@ -38,3 +38,19 @@ export interface ITestimonial {
   text: string;
   rating: number;
 }
+
+export interface IProduct {
+  _id: string;
+  name: string;
+  description: string;
+  salePrice: number;
+  regularPrice?: number;
+  thumbnail: string;
+  images: string[];
+  categoryID?: {
+    name: string;
+  };
+  straight_up?: string;
+  lowdown?: string[];
+  stock: number;
+}

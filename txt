@@ -347,3 +347,19 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
 };
 
 export default UpdateProductModal;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

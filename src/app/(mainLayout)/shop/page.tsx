@@ -1,32 +1,43 @@
-
-
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import axios from "axios";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 import { BASE_URL } from "@/helper/BASE_URL";
 import ProductCard from "@/components/shared/ProductCard";
-import { IoBagHandleOutline } from "react-icons/io5"; 
+import { IoBagHandleOutline } from "react-icons/io5";
 
 const Shop = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  
+  const queryPage = Number(searchParams.get("page")) || 1;
+  const queryCategory = searchParams.get("category") || "";
+  const querySort = searchParams.get("sort") || "-createdAt";
+
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const [activeCategoryId, setActiveCategoryId] = useState<string>("");
-  const [activeCategoryName, setActiveCategoryName] =
-    useState<string>("All Product");
-  const [sortOption, setSortOption] = useState<string>("-createdAt");
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [activeCategoryName, setActiveCategoryName] = useState<string>("All Product");
 
- 
+  // ক্যাটাগরি ডাটা ফেচ করা (এটি একবারই হবে)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/categories`);
         if (response.data.success) {
           setCategories(response.data.data);
+          // URL এর ক্যাটাগরি আইডি দিয়ে নাম সেট করা (রিফ্রেশ দিলে যাতে নাম ঠিক থাকে)
+          if (queryCategory) {
+            const currentCat = response.data.data.find((c: any) => c._id === queryCategory);
+            if (currentCat) setActiveCategoryName(currentCat.name);
+          }
         }
       } catch (error) {
         console.error("Category fetch error", error);
@@ -35,16 +46,28 @@ const Shop = () => {
     fetchCategories();
   }, []);
 
+  // URL update function
+  const updateFilters = (newParams: Record<string, string | number | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value.toString());
+      } else {
+        params.delete(key);
+      }
+    });
 
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  //  prodcut fetch url params change 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        let url = `${BASE_URL}/products?page=${currentPage}&limit=8&sort=${sortOption}`;
-
-        if (activeCategoryId) {
-          url += `&category=${activeCategoryId}`;
-        }
+        let url = `${BASE_URL}/products?page=${queryPage}&limit=8&sort=${querySort}`;
+        if (queryCategory) url += `&category=${queryCategory}`;
 
         const response = await axios.get(url);
         if (response.data.success) {
@@ -58,23 +81,22 @@ const Shop = () => {
       }
     };
     fetchProducts();
-  }, [currentPage, activeCategoryId, sortOption]);
+  }, [queryPage, queryCategory, querySort]);
 
   return (
     <div className="bg-white min-h-screen pb-20 font-raleway">
       {/* Header: Category & Sort */}
       <div className="bg-[#F9E4CB] py-4 border-b border-[#e5d8cb]">
         <div className="container mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-4">
-          {/* Dynamic Categories */}
+          
           <div className="flex gap-8 overflow-x-auto no-scrollbar py-1">
             <button
               onClick={() => {
-                setActiveCategoryId("");
                 setActiveCategoryName("All Product");
-                setCurrentPage(1);
+                updateFilters({ category: null, page: 1 });
               }}
               className={`text-[11px] font-bold uppercase tracking-[0.15em] transition-all whitespace-nowrap pb-1 ${
-                activeCategoryId === ""
+                queryCategory === ""
                   ? "text-black border-b border-black"
                   : "text-gray-500 hover:text-black"
               }`}
@@ -85,12 +107,11 @@ const Shop = () => {
               <button
                 key={cat._id}
                 onClick={() => {
-                  setActiveCategoryId(cat._id);
                   setActiveCategoryName(cat.name);
-                  setCurrentPage(1);
+                  updateFilters({ category: cat._id, page: 1 });
                 }}
                 className={`text-[11px] font-bold uppercase tracking-[0.15em] transition-all whitespace-nowrap pb-1 ${
-                  activeCategoryId === cat._id
+                  queryCategory === cat._id
                     ? "text-black border-b border-black"
                     : "text-gray-500 hover:text-black"
                 }`}
@@ -100,15 +121,11 @@ const Shop = () => {
             ))}
           </div>
 
-          {/* Sorting Dropdown */}
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
             <span className="text-gray-500">Sort :</span>
             <select
-              value={sortOption}
-              onChange={(e) => {
-                setSortOption(e.target.value);
-                setCurrentPage(1);
-              }}
+              value={querySort}
+              onChange={(e) => updateFilters({ sort: e.target.value, page: 1 })}
               className="bg-transparent focus:outline-none cursor-pointer border-none outline-none font-bold"
             >
               <option value="-createdAt">Featured</option>
@@ -119,11 +136,18 @@ const Shop = () => {
         </div>
       </div>
 
-      {/* Product Grid Section */}
       <div className="container mx-auto px-4 md:px-12 mt-12">
         {loading ? (
-          <div className="h-96 flex justify-center items-center text-[10px] font-bold tracking-[0.3em] text-gray-300 uppercase">
-            Loading Glowly Collection...
+          /* Skeleton Loading State */
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="flex flex-col gap-3">
+                <Skeleton height={280} borderRadius={8} baseColor="#f9f9f9" />
+                <Skeleton width="40%" height={12} />
+                <Skeleton width="90%" height={20} />
+                <Skeleton width="30%" height={15} />
+              </div>
+            ))}
           </div>
         ) : products.length > 0 ? (
           <>
@@ -133,19 +157,18 @@ const Shop = () => {
               ))}
             </div>
 
-            {/* Pagination  */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="mt-20 flex justify-center items-center gap-1">
                 <button
-                  disabled={currentPage === 1}
+                  disabled={queryPage === 1}
                   onClick={() => {
-                    setCurrentPage((p) => p - 1);
+                    updateFilters({ page: queryPage - 1 });
                     window.scrollTo(0, 0);
                   }}
                   className="w-8 h-8 border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white disabled:opacity-30 transition-all text-xs"
                 >
-                  {" "}
-                  ←{" "}
+                  ←
                 </button>
 
                 <div className="flex items-center gap-1">
@@ -153,11 +176,11 @@ const Shop = () => {
                     <button
                       key={idx}
                       onClick={() => {
-                        setCurrentPage(idx + 1);
+                        updateFilters({ page: idx + 1 });
                         window.scrollTo(0, 0);
                       }}
                       className={`w-8 h-8 border text-[10px] font-bold transition-all ${
-                        currentPage === idx + 1
+                        queryPage === idx + 1
                           ? "bg-black text-white border-black"
                           : "text-gray-400 border-gray-200 hover:border-black"
                       }`}
@@ -168,21 +191,20 @@ const Shop = () => {
                 </div>
 
                 <button
-                  disabled={currentPage === totalPages}
+                  disabled={queryPage === totalPages}
                   onClick={() => {
-                    setCurrentPage((p) => p + 1);
+                    updateFilters({ page: queryPage + 1 });
                     window.scrollTo(0, 0);
                   }}
                   className="w-8 h-8 border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white disabled:opacity-30 transition-all text-xs"
                 >
-                  {" "}
-                  →{" "}
+                  →
                 </button>
               </div>
             )}
           </>
         ) : (
-          /* Empty State*/
+          /* Empty State */
           <div className="h-96 flex flex-col justify-center items-center text-center">
             <IoBagHandleOutline size={50} className="text-gray-200 mb-4" />
             <h3 className="text-lg font-bold text-gray-900 uppercase tracking-tighter">
@@ -190,13 +212,10 @@ const Shop = () => {
             </h3>
             <p className="text-gray-400 text-[11px] uppercase tracking-widest mt-2 max-w-xs">
               Sorry, we couldn't find any products in the "{activeCategoryName}"
-              category at this moment.
+              category.
             </p>
             <button
-              onClick={() => {
-                setActiveCategoryId("");
-                setActiveCategoryName("All Product");
-              }}
+              onClick={() => updateFilters({ category: null, page: 1 })}
               className="mt-6 text-[10px] font-bold uppercase tracking-widest border-b border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition-all"
             >
               Browse all products
