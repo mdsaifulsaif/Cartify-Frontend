@@ -11,6 +11,8 @@ import LoadingPage from "@/components/shared/LoadingPage";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Handpicked from "../_components/Handpicked ";
+import PrimaryButton from "@/components/button/PrimaryButton";
+import SecondaryButton from "@/components/button/SecondaryButton";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -79,7 +81,15 @@ const ProductDetails = () => {
     }
   };
 
-  if (loading || !product) return <LoadingPage />;
+  if (loading) return <DetailsSkeleton />;
+  if (!product)
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p className="text-gray-400 font-bold uppercase tracking-widest">
+          Product Not Found
+        </p>
+      </div>
+    );
 
   return (
     <div className="bg-white min-h-screen font-raleway">
@@ -254,17 +264,8 @@ const ProductDetails = () => {
                     <FaPlus size={12} />
                   </button>
                 </div>
+
                 {/* <button
-                  disabled={product.stock === 0}
-                  onClick={() => {
-                    addToCart(product, quantity);
-                    toast.success("Added to Bag!");
-                  }}
-                  className="flex-1 bg-white border border-black text-black py-4 rounded-full font-bold uppercase text-[11px] tracking-[0.2em] hover:bg-black hover:text-white transition-all disabled:opacity-20"
-                >
-                  Add to Shopping Bag
-                </button> */}
-                <button
                   disabled={product.stock === 0}
                   onClick={() => {
                     addToCart(product, quantity);
@@ -274,9 +275,19 @@ const ProductDetails = () => {
                   className="flex-1 flex items-center justify-center bg-white border border-black text-black py-4 rounded-full font-bold uppercase text-[11px] tracking-[0.2em] hover:bg-black hover:text-white transition-all disabled:opacity-20 text-center"
                 >
                   Add to Shopping Bag
-                </button>
+                </button> */}
+                <SecondaryButton
+                  disabled={product.stock === 0}
+                  onClick={() => {
+                    addToCart(product, quantity);
+                    toast.success("Added to Bag!", {});
+                  }}
+                  className="flex-1 transition-all"
+                >
+                  Add to Shopping Bag
+                </SecondaryButton>
               </div>
-              <button
+              {/* <button
                 disabled={product.stock === 0}
                 onClick={() => {
                   addToCart(product, quantity);
@@ -287,7 +298,27 @@ const ProductDetails = () => {
                 {product.stock === 0
                   ? "Out of Stock"
                   : "Order Now (সরাসরি অর্ডার)"}
-              </button>
+              </button> */}
+              <PrimaryButton
+                type="button"
+                disabled={product.stock === 0}
+                onClick={() => {
+                  addToCart(product, quantity);
+                  router.push("/checkout");
+                }}
+                className="w-full disabled:bg-gray-200"
+              >
+                {product.stock === 0 ? (
+                  "Out of Stock"
+                ) : (
+                  <span className="flex items-center gap-2">
+                    Order Now{" "}
+                    <span className="font-normal text-[13px]">
+                      (সরাসরি অর্ডার)
+                    </span>
+                  </span>
+                )}
+              </PrimaryButton>
             </div>
           </div>
         </div>
@@ -433,3 +464,49 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
+
+const DetailsSkeleton = () => (
+  <div className="bg-white min-h-screen font-raleway">
+    <div className="container mx-auto px-4 py-10 md:pt-16">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        {/* Left: Gallery Skeleton */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-row md:flex-col gap-3 order-2 md:order-1 overflow-hidden">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="w-20 h-20 bg-gray-100 animate-pulse rounded-sm"
+              />
+            ))}
+          </div>
+          <div className="flex-1 bg-gray-50 aspect-[704/908] w-full animate-pulse rounded-sm order-1 md:order-2" />
+        </div>
+
+        {/* Right: Info Skeleton */}
+        <div className="flex flex-col pt-4 space-y-6">
+          <div className="space-y-3">
+            <div className="h-10 bg-gray-100 animate-pulse w-3/4 rounded-md" />
+            <div className="h-4 bg-gray-50 animate-pulse w-1/4 rounded-md" />
+          </div>
+
+          <div className="space-y-4 py-6 border-y border-gray-100">
+            <div className="h-12 bg-gray-100 animate-pulse w-1/2 rounded-md" />
+            <div className="h-4 bg-gray-50 animate-pulse w-1/3 rounded-md" />
+          </div>
+
+          <div className="space-y-4">
+            <div className="h-4 bg-gray-100 animate-pulse w-full rounded-sm" />
+            <div className="h-4 bg-gray-100 animate-pulse w-full rounded-sm" />
+            <div className="h-4 bg-gray-100 animate-pulse w-2/3 rounded-sm" />
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 pt-10">
+            <div className="h-[60px] bg-gray-100 animate-pulse flex-1 rounded-full" />
+            <div className="h-[60px] bg-gray-100 animate-pulse flex-1 rounded-full" />
+          </div>
+          <div className="h-[60px] bg-gray-200 animate-pulse w-full rounded-full" />
+        </div>
+      </div>
+    </div>
+  </div>
+);

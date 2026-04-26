@@ -8,7 +8,8 @@ import { ICategory } from "@/types/type";
 async function getCategories(): Promise<ICategory[]> {
   try {
     const res = await fetch(`${BASE_URL}/categories`, {
-      next: { revalidate: 86400 }, 
+      // next: { revalidate: 86400 }, 
+      next: { revalidate: 300 }
     });
 
     if (!res.ok) return [];
@@ -43,7 +44,7 @@ const CategorySection = async () => {
               {categories.map((cat: ICategory) => (
                 <Link
                   key={cat._id}
-                  href={`/category/${cat.name?.toLowerCase().replace(/\s+/g, "-")}`}
+                  href={`/category/${cat._id}`}
                   className="relative group cursor-pointer overflow-hidden aspect-square rounded-[8px]"
                 >
                   <Image
@@ -63,7 +64,7 @@ const CategorySection = async () => {
                 </Link>
               ))}
 
-              {/* Empty state slots (যদি ৪টির কম ডাটা থাকে) */}
+              {/* Empty state slots  */}
               {categories.length < 4 &&
                 [...Array(4 - categories.length)].map((_, i) => (
                   <div
