@@ -7,26 +7,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCartStore } from "@/store/useCartStore";
 import toast from "react-hot-toast";
+import { ProductProps } from "@/types/type";
 
-// ১. প্রোডাক্টের জন্য ইন্টারফেস ডিফাইন করা (টাইপ এরর ফিক্স করবে)
-interface ProductProps {
-  product: {
-    _id: string;
-    name: string;
-    thumbnail: string;
-    salePrice: number;
-    categoryID?: {
-      name: string;
-    };
-    rating?: number;
-    reviews?: number;
-  };
-}
+
 
 const ProductCard = ({ product }: ProductProps) => {
   const addToCart = useCartStore((state) => state.addToCart);
 
-  // ডিফল্ট ভ্যালু সেট করে রাখা যাতে ডাটা না থাকলেও ক্রাশ না করে
+
   const {
     _id,
     name,
@@ -42,7 +30,7 @@ const ProductCard = ({ product }: ProductProps) => {
     e.stopPropagation();
 
     if (product) {
-      // @ts-ignore (যদি স্টোর টাইপ করা না থাকে)
+    
       addToCart(product, 1);
       toast.success(`${name} added to cart!`, {
         style: {
@@ -113,3 +101,4 @@ const ProductCard = ({ product }: ProductProps) => {
 };
 
 export default ProductCard;
+

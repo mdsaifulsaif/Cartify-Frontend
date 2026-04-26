@@ -1,10 +1,11 @@
+"use client"
 import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
-// স্লাইডের ডাটার জন্য ইন্টারফেস তৈরি
+
 interface Slide {
   image: string;
   title: string;
