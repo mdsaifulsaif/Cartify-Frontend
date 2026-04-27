@@ -26,14 +26,14 @@ const Shop = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [activeCategoryName, setActiveCategoryName] = useState<string>("All Product");
 
-  // ক্যাটাগরি ডাটা ফেচ করা (এটি একবারই হবে)
+  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/categories`);
         if (response.data.success) {
           setCategories(response.data.data);
-          // URL এর ক্যাটাগরি আইডি দিয়ে নাম সেট করা (রিফ্রেশ দিলে যাতে নাম ঠিক থাকে)
+        
           if (queryCategory) {
             const currentCat = response.data.data.find((c: any) => c._id === queryCategory);
             if (currentCat) setActiveCategoryName(currentCat.name);

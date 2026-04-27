@@ -19,6 +19,7 @@ import {
   IoAddOutline,
 } from "react-icons/io5";
 import { useModalStore } from "@/store/useModalStore";
+import CreatableSelect from "react-select/creatable";
 import { BASE_URL } from "@/helper/BASE_URL";
 
 interface Category {
@@ -36,6 +37,13 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   refreshProducts,
 }) => {
   const { isOpen, type, onClose } = useModalStore();
+
+  // tagsText এর পরিবর্তে values ব্যবহার করব
+  const [tags, setTags] = useState<{ label: string; value: string }[]>([]);
+
+  const handleTagChange = (newValue: any) => {
+    setTags(newValue);
+  };
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -96,11 +104,10 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     setFormData((prev) => {
       const newData = { ...prev, [name]: finalValue };
 
-      // যদি ইউজার 'name' ফিল্ডে টাইপ করে, তবে অটোমেটিক 'slug' আপডেট হবে
       if (name === "name") {
         newData.slug = slugify(value, {
-          lower: true, // সব ছোট হাতের অক্ষর হবে
-          strict: true, // স্পেশাল ক্যারেক্টার রিমুভ করবে
+          lower: true,
+          strict: true,
           trim: true,
         });
       }
@@ -238,11 +245,13 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     });
 
     // 2. Process Tags (Array ke JSON stringify kore pathate hobe)
-    const tagsArray = formData.tagsText
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== "");
-    data.append("tags", JSON.stringify(tagsArray)); // Send as JSON string
+    // const tagsArray = formData.tagsText
+    //   .split(",")
+    //   .map((tag) => tag.trim())
+    //   .filter((tag) => tag !== "");
+    // data.append("tags", JSON.stringify(tagsArray)); // Send as JSON string
+    const tagsArray = tags.map((tag) => tag.value); // {label, value} থেকে শুধু string বের করে আনবে
+    data.append("tags", JSON.stringify(tagsArray));
 
     // 3. Process Advanced Specs (lowdown array format)
     const lowdownArray = advancedSpecs
@@ -312,6 +321,47 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
       </label>
     </div>
   );
+
+  const customSelectStyles = {
+    control: (base: any) => ({
+      ...base,
+      backgroundColor: "#F9FAFB", // bg-gray-50
+      borderColor: "#F3F4F6", // border-gray-100
+      borderRadius: "0.75rem", // rounded-xl
+      padding: "4px",
+      boxShadow: "none",
+      "&:hover": {
+        borderColor: "#F3F4F6",
+      },
+    }),
+    multiValue: (base: any) => ({
+      ...base,
+      backgroundColor: "#000000", // Black background for tags
+      borderRadius: "6px",
+      padding: "2px 4px",
+    }),
+    multiValueLabel: (base: any) => ({
+      ...base,
+      color: "#FFFFFF", // White text
+      fontSize: "11px",
+      fontWeight: "700",
+      textTransform: "uppercase",
+    }),
+    multiValueRemove: (base: any) => ({
+      ...base,
+      color: "#FFFFFF",
+      cursor: "pointer",
+      "&:hover": {
+        backgroundColor: "#FF4444",
+        color: "#FFFFFF",
+      },
+    }),
+    placeholder: (base: any) => ({
+      ...base,
+      color: "#D1D5DB", // placeholder gray-300
+      fontSize: "14px",
+    }),
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4">
@@ -717,7 +767,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                   </select>
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className={labelStyle}>Search Tags</label>
                   <input
                     name="tagsText"
@@ -726,6 +776,22 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                     className={inputStyle}
                     placeholder="e.g. fashion, smartphone, summer"
                   />
+                </div> */}
+                <div className="space-y-2">
+                  <label className={labelStyle}>Search Tags</label>
+                  <CreatableSelect
+                    isMulti
+                    placeholder="Type tag and press enter..."
+                    value={tags}
+                    onChange={handleTagChange}
+                    styles={customSelectStyles}
+                    components={{
+                      DropdownIndicator: null, // সার্চ আইকন হাইড করার জন্য
+                    }}
+                  />
+                  <p className="text-[10px] text-gray-400 italic">
+                    * Type and press Enter to create multiple tags.
+                  </p>
                 </div>
               </div>
 
