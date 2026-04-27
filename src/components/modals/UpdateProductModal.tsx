@@ -1,12 +1,13 @@
 
+
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Select from "react-select";
 import slugify from "slugify";
 import { UpdateProductModalProps } from "@/types/modal.types";
+import CreatableSelect from "react-select/creatable"; // পরিবর্তিত
 
 import {
   IoCloseOutline,
@@ -15,7 +16,6 @@ import {
   IoImagesOutline,
   IoPricetagOutline,
   IoSyncOutline,
-  IoLayersOutline,
   IoCartOutline,
   IoTrashOutline,
   IoAddOutline,
@@ -36,6 +36,9 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
     { value: string; label: string }[]
   >([]);
 
+
+  const [tags, setTags] = useState<{ label: string; value: string }[]>([]);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -47,7 +50,6 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
     stock: "",
     sku: "",
     categoryID: "",
-    tagsText: "",
     isFeatured: false,
     isNew: true,
     freeShipping: false,
@@ -59,50 +61,32 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
 
-  // ক্যাটাগরি ফেচ করা এবং কনসোল লগ চেক করা
+ 
   useEffect(() => {
-    console.log("--- Modal Effect Run ---");
-    console.log("isOpen:", isOpen);
-    console.log("Modal Type:", type);
-
     if (!isOpen) return;
 
     if (externalCategories && externalCategories.length > 0) {
-      console.log(
-        "Categories found in PROPS, skipping API call:",
-        externalCategories,
-      );
       setCategories(externalCategories);
     } else {
       const fetchCategories = async () => {
         try {
-          console.log(
-            "📡 Attempting to fetch categories from:",
-            `${BASE_URL}/categories`,
-          );
           const res = await axios.get(`${BASE_URL}/categories`);
-
-          console.log("✅ API Response Received:", res.data);
-
           if (res.data.success) {
             const options = res.data.data.map((cat: any) => ({
               value: cat._id,
               label: cat.name,
             }));
-            console.log("🎯 Formatted Category Options:", options);
             setCategories(options);
-          } else {
-            console.warn("⚠️ Success is false in API response");
           }
         } catch (err) {
-          console.error("❌ Error fetching categories:", err);
+          console.error(" Error fetching categories:", err);
         }
       };
       fetchCategories();
     }
   }, [isOpen, externalCategories, type]);
 
-  // ফর্ম ডাটা প্রি-ফিল করা
+  // এডিট মোডে ডাটা পপুলেট করা
   useEffect(() => {
     if (isOpen && type === "editProduct" && product) {
       setFormData({
@@ -116,12 +100,19 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
         stock: product.stock?.toString() || "",
         sku: product.sku || "",
         categoryID: product.categoryID?._id || product.categoryID || "",
-        tagsText: product.tags ? product.tags.join(", ") : "",
         isFeatured: product.isFeatured || false,
         isNew: product.isNew || false,
         freeShipping: product.freeShipping || false,
         status: product.status || "active",
       });
+
+      // ট্যাগ স্ট্রিং অ্যারে থেকে রিঅ্যাক্ট-সিলেক্ট অবজেক্টে রূপান্তর
+      if (product.tags) {
+        setTags(product.tags.map((t: string) => ({ label: t, value: t })));
+      } else {
+        setTags([]);
+      }
+
       setThumbnailPreview(product.thumbnail || null);
       setGalleryPreviews(product.images || []);
       setGalleryImages([]);
@@ -176,17 +167,16 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
     e.preventDefault();
     setLoading(true);
     const data = new FormData();
+
+ 
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === "tagsText") {
-        const tags = (value as string)
-          .split(",")
-          .map((t) => t.trim())
-          .filter((t) => t !== "");
-        data.append("tags", JSON.stringify(tags));
-      } else {
-        data.append(key, value.toString());
-      }
+      data.append(key, value.toString());
     });
+
+    
+    const tagsArray = tags.map((t) => t.value);
+    data.append("tags", JSON.stringify(tagsArray));
+
     if (thumbnail) data.append("thumbnail", thumbnail);
     galleryImages.forEach((img) => data.append("images", img));
 
@@ -481,20 +471,55 @@ const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
                       ))}
                     </select>
 
-                    {/* Hover effect highlight (Optional) */}
                     <div className="absolute inset-y-0 right-0 flex items-center pr-10 pointer-events-none border-r border-gray-100 my-3 mr-10"></div>
                   </div>
                 </div>
 
-                {/* Search Tags */}
+                {/* Search Tags (এখানে CreatableSelect ব্যবহার করা হয়েছে) */}
                 <div className="space-y-2">
                   <label className={labelStyle}>Search Tags</label>
-                  <input
-                    name="tagsText"
-                    value={formData.tagsText}
-                    onChange={handleInputChange}
-                    className={`${inputStyle} transition-all duration-300 focus:ring-2 focus:ring-black/5`}
-                    placeholder="e.g. fashion, smartphone, summer"
+                  <CreatableSelect
+                    isMulti
+                    placeholder="Type tag and press enter..."
+                    value={tags}
+                    // onChange={(newValue) => setTags(newValue || [])}
+                    onChange={(newValue) =>
+                      setTags(newValue as { label: string; value: string }[])
+                    }
+                    classNamePrefix="react-select"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        backgroundColor: "#F9FAFB",
+                        borderColor: "#F3F4F6",
+                        borderRadius: "0.75rem",
+                        padding: "4px",
+                        boxShadow: "none",
+                        "&:hover": { borderColor: "#E5E7EB" },
+                      }),
+                      multiValue: (base) => ({
+                        ...base,
+                        backgroundColor: "#000000",
+                        borderRadius: "8px",
+                      }),
+                      multiValueLabel: (base) => ({
+                        ...base,
+                        color: "#FFFFFF",
+                        fontSize: "11px",
+                        fontWeight: "700",
+                        padding: "2px 6px",
+                      }),
+                      multiValueRemove: (base) => ({
+                        ...base,
+                        color: "#FFFFFF",
+                        "&:hover": {
+                          backgroundColor: "#FF4444",
+                          color: "white",
+                          borderRadius: "0 8px 8px 0",
+                        },
+                      }),
+                    }}
+                    components={{ DropdownIndicator: null }}
                   />
                 </div>
               </div>
