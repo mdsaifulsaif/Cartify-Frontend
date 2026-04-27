@@ -14,6 +14,8 @@ import {
 } from "react-icons/io5";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import toast from "react-hot-toast";
+import Skeleton from "react-loading-skeleton"; // Import Skeleton
+import "react-loading-skeleton/dist/skeleton.css"; // CSS ইমপোর্ট করতে ভুলবেন না
 
 import { useModalStore } from "@/store/useModalStore";
 import OrderStatusModal from "@/components/modals/OrderStatusModal"; 
@@ -37,11 +39,10 @@ const OrderPage = () => {
         { withCredentials: true },
       );
       
-     
       if (response.data.success) {
         setOrders(response.data.data.orders);
         setStats(response.data.data.stats);
-        setPagination(response.data.meta); // meta এর ভেতর page, total, limit আছে
+        setPagination(response.data.meta);
       }
     } catch (error: any) {
       console.error("Order Fetch Error:", error);
@@ -75,9 +76,16 @@ const OrderPage = () => {
       <OrderStatusModal fetchOrders={fetchOrders} />
 
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-800 italic uppercase tracking-tighter">
-          Order Management
-        </h2>
+        
+         <div>
+          <h1 className="text-2xl font-bold text-gray-800">
+             Order Management
+          </h1>
+          <p className="text-xs text-gray-500">
+            {" "}
+            Order Control
+          </p>
+        </div>
         <button 
           onClick={() => fetchOrders()}
           className="p-2 hover:rotate-180 transition-all duration-500 text-gray-400"
@@ -86,14 +94,14 @@ const OrderPage = () => {
         </button>
       </div>
 
-      {/* Stats Cards - API থেকে সরাসরি ডাটা বসানো হয়েছে */}
+      {/* Stats Cards with Skeleton */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 md:gap-4">
-        <StatCard label="Total" value={stats?.total || 0} icon={<IoCartOutline />} />
-        <StatCard label="Pending" value={stats?.pending || 0} icon={<IoStatsChartOutline />} color="text-yellow-500" />
-        <StatCard label="Processing" value={stats?.processing || 0} icon={<IoTimeOutline />} color="text-blue-500" />
-        <StatCard label="Shipped" value={stats?.shipped || 0} icon={<IoRocketOutline />} color="text-purple-500" />
-        <StatCard label="Delivered" value={stats?.delivered || 0} icon={<IoCheckmarkCircleOutline />} color="text-green-500" />
-        <StatCard label="Cancelled" value={stats?.cancelled || 0} icon={<IoBanOutline />} color="text-red-500" />
+        <StatCard label="Total" value={stats?.total} icon={<IoCartOutline />} loading={loading} />
+        <StatCard label="Pending" value={stats?.pending} icon={<IoStatsChartOutline />} color="text-yellow-500" loading={loading} />
+        <StatCard label="Processing" value={stats?.processing} icon={<IoTimeOutline />} color="text-blue-500" loading={loading} />
+        <StatCard label="Shipped" value={stats?.shipped} icon={<IoRocketOutline />} color="text-purple-500" loading={loading} />
+        <StatCard label="Delivered" value={stats?.delivered} icon={<IoCheckmarkCircleOutline />} color="text-green-500" loading={loading} />
+        <StatCard label="Cancelled" value={stats?.cancelled} icon={<IoBanOutline />} color="text-red-500" loading={loading} />
       </div>
 
       {/* Search Bar */}
@@ -107,8 +115,8 @@ const OrderPage = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="text-[10px] font-bold text-gray-400 uppercase">
-          Showing {orders.length} of {pagination?.total || 0} Orders
+        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+           {loading ? <Skeleton width={120} /> : `Showing ${orders.length} of ${pagination?.total || 0} Orders`}
         </div>
       </div>
 
@@ -129,7 +137,18 @@ const OrderPage = () => {
             </thead>
             <tbody className="divide-y divide-gray-50 text-sm">
               {loading ? (
-                <tr><td colSpan={7} className="text-center py-24 text-gray-400 animate-pulse italic">Syncing with database...</td></tr>
+                // Skeleton Rows
+                [...Array(5)].map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-5"><Skeleton width={80} /></td>
+                    <td className="px-6 py-5"><Skeleton width={150} height={15} /><Skeleton width={100} height={10} /></td>
+                    <td className="px-6 py-5"><Skeleton width={100} /></td>
+                    <td className="px-6 py-5"><Skeleton width={40} /></td>
+                    <td className="px-6 py-5"><Skeleton width={60} /></td>
+                    <td className="px-6 py-5 text-center"><Skeleton width={70} height={20} borderRadius={20} /></td>
+                    <td className="px-6 py-5 text-center"><Skeleton width={80} height={30} borderRadius={20} /></td>
+                  </tr>
+                ))
               ) : orders.length === 0 ? (
                 <tr><td colSpan={7} className="text-center py-24 text-gray-400 italic font-medium">No orders matching your criteria.</td></tr>
               ) : (
@@ -176,18 +195,18 @@ const OrderPage = () => {
         {/* Pagination */}
         <div className="p-6 border-t border-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            Page <span className="text-black">{pagination?.page || 1}</span> of <span className="text-black">{pagination?.totalPage || 1}</span>
+            {loading ? <Skeleton width={100} /> : <>Page <span className="text-black">{pagination?.page || 1}</span> of <span className="text-black">{pagination?.totalPage || 1}</span></>}
           </p>
           <div className="flex items-center gap-3">
             <button
-              disabled={pagination?.page <= 1}
+              disabled={pagination?.page <= 1 || loading}
               onClick={() => setCurrentPage((p) => p - 1)}
               className="p-2.5 border border-gray-100 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-20 transition-all"
             >
               <FiChevronLeft size={18} />
             </button>
             <button
-              disabled={pagination?.page >= pagination?.totalPage}
+              disabled={pagination?.page >= pagination?.totalPage || loading}
               onClick={() => setCurrentPage((p) => p + 1)}
               className="p-2.5 border border-gray-100 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-20 transition-all"
             >
@@ -200,11 +219,13 @@ const OrderPage = () => {
   );
 };
 
-const StatCard = ({ label, value, icon, color = "text-black" }: any) => (
+const StatCard = ({ label, value, icon, color = "text-black", loading }: any) => (
   <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-3 hover:border-gray-200 transition-all group">
     <div className="flex justify-between items-center">
       <span className={`text-lg ${color} bg-gray-50 p-2 rounded-lg group-hover:scale-110 transition-transform`}>{icon}</span>
-      <h3 className="text-xl font-bold text-gray-900">{value}</h3>
+      <h3 className="text-xl font-bold text-gray-900">
+        {loading ? <Skeleton width={40} /> : value || 0}
+      </h3>
     </div>
     <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{label}</p>
   </div>
