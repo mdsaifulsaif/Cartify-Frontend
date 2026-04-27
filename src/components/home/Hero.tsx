@@ -17,7 +17,7 @@ const Hero: React.FC = () => {
 
   const slides: Slide[] = [
     {
-      image: "https://res.cloudinary.com/dn5t9fhya/image/upload/v1772695550/213fd250bb0bc5f9ffa2d884670fccd9297d1776_uae7fj.jpg",
+      image: "https://res.cloudinary.com/dn5t9fhya/image/upload/v1777201934/WhatsApp_Image_2026-04-26_at_15.41.04_awstij.jpg",
       title: "Discover your skin's true potential",
       subtitle: "Premium skincare that combines innovation with clean, effective ingredients for all skin types."
     },

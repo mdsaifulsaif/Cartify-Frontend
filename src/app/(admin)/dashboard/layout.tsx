@@ -43,6 +43,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { name: "Category", icon: <IoCubeOutline />, path: "/dashboard/category" },
     { name: "Products", icon: <IoCubeOutline />, path: "/dashboard/products" },
     { name: "Orders", icon: <IoCartOutline />, path: "/dashboard/orders" },
+    { name: "Analytics", icon: <IoCartOutline />, path: "/dashboard/analytics" },
     {
       name: "Customers",
       icon: <IoPeopleOutline />,
