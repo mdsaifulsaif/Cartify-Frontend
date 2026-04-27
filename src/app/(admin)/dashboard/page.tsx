@@ -69,7 +69,7 @@ const DashboardOverview: React.FC = () => {
   );
 
   return (
-    <div className="p-6 bg-[#F8F9FB] min-h-screen space-y-6 font-sans">
+    <div className=" min-h-screen space-y-6 font-sans">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
