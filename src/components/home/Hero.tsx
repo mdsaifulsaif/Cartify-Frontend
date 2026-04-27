@@ -45,7 +45,7 @@ const Hero: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       nextSlide();
-    }, 8000);
+    }, 80000);
     return () => clearInterval(timer);
   }, [current]);
 
