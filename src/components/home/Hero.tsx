@@ -22,12 +22,12 @@ const Hero: React.FC = () => {
       subtitle: "Premium skincare that combines innovation with clean, effective ingredients for all skin types."
     },
     {
-      image: "https://res.cloudinary.com/dn5t9fhya/image/upload/v1772695484/1157cfd8a0d89044407438fa1c4119bdf39ea7fb_ohqgyp.jpg",
+      image: "https://res.cloudinary.com/dn5t9fhya/image/upload/v1777288516/WhatsApp_Image_2026-04-26_at_15.41.05_q6t96a.jpg",
       title: "Radiance starts from within",
       subtitle: "Experience the glow of natural beauty with our organic collection."
     },
     {
-      image: "https://res.cloudinary.com/dn5t9fhya/image/upload/v1772695361/1d39ac8aa27f4f2e3f0dfae43954d183843f7540_mejodn.jpg",
+      image: "https://res.cloudinary.com/dn5t9fhya/image/upload/v1777288583/WhatsApp_Image_2026-04-26_at_15.41.05_1_byprmb.jpg",
       title: "Luxury meets purity",
       subtitle: "Crafting the finest beauty products tailored for your unique skin journey."
     }

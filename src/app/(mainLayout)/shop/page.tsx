@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -211,7 +212,7 @@ const Shop = () => {
               No products found
             </h3>
             <p className="text-gray-400 text-[11px] uppercase tracking-widest mt-2 max-w-xs">
-              Sorry, we couldn't find any products in the "{activeCategoryName}"
+              Sorry, we couldnt find any products in the {activeCategoryName}
               category.
             </p>
             <button

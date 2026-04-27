@@ -57,11 +57,11 @@ const Footer: React.FC = () => {
           <div className="flex flex-col gap-6">
             <Link href="/">
               <Image
-                src="/assets/logo.png"
+                src={settings?.logo ||"/assets/logo.png"}
                 alt="Glowly Logo"
-                width={90}
-                height={45}
-                className="w-auto h-auto transition-opacity hover:opacity-80"
+                width={120}
+                height={50}
+                className="w-full max-w-[120px] h-auto object-contain transition-opacity hover:opacity-80"
               />
             </Link>
             <p className="content-text !text-[14px] max-w-xs">
@@ -106,18 +106,10 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  href="/skincare"
+                  href="/shop"
                   className="hover:text-black hover:translate-x-1 transition-all inline-block"
                 >
-                  Skincare
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/collections"
-                  className="hover:text-black hover:translate-x-1 transition-all inline-block"
-                >
-                  Collections
+                  shop
                 </Link>
               </li>
               <li>
