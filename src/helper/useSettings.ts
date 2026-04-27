@@ -8,6 +8,8 @@ export type Settings = {
   tagline: string;
   address: string;
   email: string;
+  logo: string;
+  favicon: string;
   phone: string;
   currency: string;
   currencySymbol: string;

@@ -93,7 +93,7 @@ const Navbar = () => {
 
   if (!isMounted) return null;
    if (isLoading) return <div>Loading logo...</div>;
-
+  
   return (
     <>
       {isScrolled && <div className="h-[72px] md:h-[84px]"></div>}
@@ -111,7 +111,7 @@ const Navbar = () => {
             </button>
             <Link href="/">
               <Image
-                src="/assets/logo.png"
+                src={settings?.logo || "/assets/logo.png"}
                 alt="Logo"
                 width={isScrolled ? 70 : 80}
                 height={40}
