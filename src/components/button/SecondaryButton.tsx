@@ -26,36 +26,38 @@ const SecondaryButton = ({
       onClick={onClick}
       disabled={disabled || isLoading}
       className={`
-        /* Layout & Colors */
+        /* Base Classes */
         bg-white 
         text-black 
-        border border-black
+        border 
+        border-black 
         rounded-[5px] 
         p-[16px] 
-        flex items-center justify-center 
+        flex 
+        items-center 
+        justify-center 
         gap-[10px] 
         
-        /* আপনার দেওয়া Inter Font Style */
-     
-        font-[500]
-        text-[16px]
-        leading-[24px]
-        tracking-[0px]
+        /* Typography Classes */
+        font-medium 
+        text-[16px] 
+        leading-[24px] 
+        tracking-[0px] 
         
-        /* Hover & Interaction - Scale Effect */
+        /* Interaction & Animation Classes */
         transition-all 
         duration-300 
-        ease-out
-        hover:scale-[1.03]  
-        hover:bg-gray-50   /* হালকা গ্রে শেড মাউস নিলে */
+        ease-out 
+        hover:scale-[1.03] 
+        hover:bg-gray-50 
         active:scale-[0.98] 
         
-        /* States */
+        /* State Classes */
         disabled:opacity-40 
-        disabled:cursor-not-allowed
-        disabled:hover:scale-100
+        disabled:cursor-not-allowed 
+        disabled:hover:scale-100 
         
-        /* Custom Classes */
+        /* User Provided Custom Classes */
         ${className}
       `}
     >
