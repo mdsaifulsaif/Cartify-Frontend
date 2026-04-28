@@ -12,6 +12,7 @@ import { useCartStore } from "@/store/useCartStore";
 import toast from "react-hot-toast";
 import { ProductProps } from "@/types/type";
 import { useRouter } from "next/navigation"; 
+import { TbCurrencyTaka } from "react-icons/tb";
 
 const ProductCard = ({ product }: ProductProps) => {
   const addToCart = useCartStore((state) => state.addToCart);
@@ -121,7 +122,9 @@ const ProductCard = ({ product }: ProductProps) => {
         <span className="card-category">{categoryID?.name || "Skincare"}</span>
         <h3 className="card-title line-clamp-1">{name}</h3>
         <div className="flex items-center justify-between mt-1">
-          <p className="card-price font-bold text-gray-900">${salePrice}</p>
+          <p className="card-price flex  -gap-2 font-bold text-gray-900">
+            <TbCurrencyTaka className="md:text-4xl" />
+            {salePrice}</p>
           <div className="rating-container flex items-center gap-1 text-[11px]">
             <span className="text-yellow-500 text-sm">★</span>
             <span className="font-bold">{rating}</span>

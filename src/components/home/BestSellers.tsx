@@ -8,7 +8,8 @@ import { IProduct } from "@/types/type";
 async function getBestSellers(): Promise<IProduct[]> {
   try {
     const res = await fetch(`${BASE_URL}/products/bestselling`, {
-      next: { revalidate: 3600 },
+    
+      next: { revalidate: 300 }
     });
 
     if (!res.ok) return [];

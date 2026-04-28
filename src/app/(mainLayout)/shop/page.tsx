@@ -67,7 +67,7 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        let url = `${BASE_URL}/products?page=${queryPage}&limit=8&sort=${querySort}`;
+        let url = `${BASE_URL}/products?page=${queryPage}&limit=12&sort=${querySort}`;
         if (queryCategory) url += `&category=${queryCategory}`;
 
         const response = await axios.get(url);
