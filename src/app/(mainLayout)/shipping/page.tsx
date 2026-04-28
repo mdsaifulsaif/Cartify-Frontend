@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
-  IoBusOutline,      // IoTruckOutline এর পরিবর্তে এটি ব্যবহার করুন
-  IoEarthOutline,    // IoGlobeOutline এর পরিবর্তে এটি ব্যবহার করুন
+  IoBusOutline,      
+  IoEarthOutline,    
   IoTimeOutline, 
   IoShieldCheckmarkOutline 
 } from "react-icons/io5";
@@ -22,7 +22,7 @@ export default function ShippingPolicy() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 md:px-8 lg:px-24 py-16">
+      <div className="container mx-auto px-4  py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           
           {/* Left Column: Policy Details */}
