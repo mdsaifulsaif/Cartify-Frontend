@@ -242,12 +242,47 @@ const ProductDetails = () => {
               <span>
                 SKU: <span className="text-gray-900">{product.sku}</span>
               </span>
-              <span>
+              {/* <span>
                 Tags:{" "}
-                <span className="text-gray-900">
-                  {product.tags?.join(", ") || "N/A"}
+                <div className="flex flex-wrap gap-2">
+                  {product.tags && product.tags.length > 0 ? (
+                    product.tags.map((tag: string, index: number) => (
+                      <Link
+                        key={index}
+                        href={`/tag?tag=${encodeURIComponent(tag.trim())}`}
+                        className="text-gray-900 hover:text-black hover:underline transition-all"
+                      >
+                        {tag.trim()}
+                        {index < product.tags.length - 1 && (
+                          <span className="text-gray-400">, </span>
+                        )}
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-gray-900">N/A</span>
+                  )}
+                </div>
+              </span> */}
+
+              {product.tags && product.tags.length > 0 && (
+                <span className="flex items-center gap-2">
+                  Tags:{" "}
+                  <div className="flex flex-wrap gap-2 items-center">
+                    {product.tags.map((tag: string, index: number) => (
+                      <Link
+                        key={index}
+                        href={`/tag?tag=${encodeURIComponent(tag.trim())}`}
+                        className="text-gray-900 hover:text-black hover:underline transition-all"
+                      >
+                        {tag.trim()}
+                        {index < product.tags.length - 1 && (
+                          <span className="text-gray-400">, </span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
                 </span>
-              </span>
+              )}
             </div>
 
             {/* Buttons Section */}
