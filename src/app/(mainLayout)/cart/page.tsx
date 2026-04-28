@@ -4,6 +4,7 @@ import React from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import Link from "next/link";
+import { TbCurrencyTaka } from "react-icons/tb";
 
 interface ICartItem {
   _id: string;
@@ -67,7 +68,7 @@ const CartPage = () => {
                         <FaTrash size={14} />
                       </button>
                     </div>
-                    <p className="text-[14px] md:text-[16px] font-bold mt-2">${item.salePrice}</p>
+                    <p className="text-[14px] flex  md:text-[16px] font-bold mt-2"> <TbCurrencyTaka className="md:text-xl" />{item.salePrice}</p>
                   </div>
 
                   <div className="flex items-center justify-between mt-4">
@@ -101,16 +102,16 @@ const CartPage = () => {
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Subtotal</span>
-                  <span className="font-bold">${subtotal.toFixed(2)}</span>
+                  <span className="font-bold flex -gap-1"> <TbCurrencyTaka className="md:text-xl" />{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Shipping</span>
-                  <span className="font-bold">${shipping.toFixed(2)}</span>
+                  <span className="font-bold flex"><TbCurrencyTaka className="md:text-xl" />{shipping.toFixed(2)}</span>
                 </div>
                 <div className="h-px bg-zinc-200/50 my-4" />
                 <div className="flex justify-between items-center text-black">
                   <span className="text-xs uppercase font-black">Total</span>
-                  <span className="text-2xl font-black">${total.toFixed(2)}</span>
+                  <span className="text-2xl font-black flex -gap-1 "><TbCurrencyTaka className="md:text-2xl font-bold" />{total.toFixed(2)}</span>
                 </div>
               </div>
 
