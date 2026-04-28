@@ -6,18 +6,12 @@ import { Pagination, Autoplay } from "swiper/modules";
 import { FaStar } from "react-icons/fa";
 import Image from "next/image";
 
-// Swiper styles
+
 import "swiper/css";
 import "swiper/css/pagination";
+import { ITestimonial } from "@/types/type";
 
-// ১. টেস্টমোনিয়াল ডাটার জন্য ইন্টারফেস
-interface ITestimonial {
-  id: number;
-  name: string;
-  image: string;
-  text: string;
-  rating: number;
-}
+
 
 const testimonials: ITestimonial[] = [
   {

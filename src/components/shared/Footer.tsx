@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import React, { useState } from "react";
@@ -11,11 +12,13 @@ import {
   IoLogoTwitter,
 } from "react-icons/io5";
 import { BASE_URL } from "@/helper/BASE_URL";
+import { useSettings } from "@/helper/useSettings";
 
 const Footer: React.FC = () => {
   const currentYear: number = new Date().getFullYear();
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { data: settings, isLoading } = useSettings();
 
   const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,6 +46,7 @@ const Footer: React.FC = () => {
       setLoading(false);
     }
   };
+  if (isLoading) return <div>Loading logo...</div>;
 
   return (
     <footer className="bg-white border-t border-gray-100 pt-16 pb-8">
@@ -53,11 +57,11 @@ const Footer: React.FC = () => {
           <div className="flex flex-col gap-6">
             <Link href="/">
               <Image
-                src="/assets/logo.png"
+                src={settings?.logo ||"/assets/logo.png"}
                 alt="Glowly Logo"
-                width={90}
-                height={45}
-                className="w-auto h-auto transition-opacity hover:opacity-80"
+                width={120}
+                height={50}
+                className="w-full max-w-[120px] h-auto object-contain transition-opacity hover:opacity-80"
               />
             </Link>
             <p className="content-text !text-[14px] max-w-xs">
@@ -66,19 +70,19 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex items-center gap-5 text-gray-400">
               <a
-                href="#"
+                href={settings?.socialLinks?.instagram}
                 className="hover:text-black transition-all hover:-translate-y-1"
               >
                 <IoLogoInstagram size={18} />
               </a>
               <a
-                href="#"
+                href={settings?.socialLinks?.facebook}
                 className="hover:text-black transition-all hover:-translate-y-1"
               >
                 <IoLogoFacebook size={18} />
               </a>
               <a
-                href="#"
+                href={settings?.socialLinks?.twitter}
                 className="hover:text-black transition-all hover:-translate-y-1"
               >
                 <IoLogoTwitter size={18} />
@@ -102,18 +106,10 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  href="/skincare"
+                  href="/shop"
                   className="hover:text-black hover:translate-x-1 transition-all inline-block"
                 >
-                  Skincare
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/collections"
-                  className="hover:text-black hover:translate-x-1 transition-all inline-block"
-                >
-                  Collections
+                  shop
                 </Link>
               </li>
               <li>

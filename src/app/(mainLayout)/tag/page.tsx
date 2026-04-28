@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
@@ -9,45 +9,23 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 import { BASE_URL } from "@/helper/BASE_URL";
 import ProductCard from "@/components/shared/ProductCard";
-import { IoBagHandleOutline } from "react-icons/io5";
+import { IoBagHandleOutline, IoPricetagOutline } from "react-icons/io5";
 
-const Shop = () => {
+const TagPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  
+
   const queryPage = Number(searchParams.get("page")) || 1;
-  const queryCategory = searchParams.get("category") || "";
+  const queryTag = searchParams.get("tag") || "";
   const querySort = searchParams.get("sort") || "-createdAt";
 
   const [products, setProducts] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [activeCategoryName, setActiveCategoryName] = useState<string>("All Product");
 
-  
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/categories`);
-        if (response.data.success) {
-          setCategories(response.data.data);
-        
-          if (queryCategory) {
-            const currentCat = response.data.data.find((c: any) => c._id === queryCategory);
-            if (currentCat) setActiveCategoryName(currentCat.name);
-          }
-        }
-      } catch (error) {
-        console.error("Category fetch error", error);
-      }
-    };
-    fetchCategories();
-  }, []);
 
-  // URL update function
   const updateFilters = (newParams: Record<string, string | number | null>) => {
     const params = new URLSearchParams(searchParams.toString());
     
@@ -62,13 +40,15 @@ const Shop = () => {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  //  prodcut fetch url params change 
+
   useEffect(() => {
     const fetchProducts = async () => {
+      if (!queryTag) return;
+      
       try {
         setLoading(true);
-        let url = `${BASE_URL}/products?page=${queryPage}&limit=8&sort=${querySort}`;
-        if (queryCategory) url += `&category=${queryCategory}`;
+ 
+        const url = `${BASE_URL}/products?page=${queryPage}&limit=8&sort=${querySort}&tag=${queryTag}`;
 
         const response = await axios.get(url);
         if (response.data.success) {
@@ -76,60 +56,40 @@ const Shop = () => {
           setTotalPages(response.data.meta?.totalPage || 1);
         }
       } catch (error) {
-        console.error("Product fetch error", error);
+        console.error("Tag product fetch error", error);
       } finally {
         setLoading(false);
       }
     };
     fetchProducts();
-  }, [queryPage, queryCategory, querySort]);
+  }, [queryPage, queryTag, querySort]);
 
   return (
     <div className="bg-white min-h-screen pb-20 font-raleway">
-      {/* Header: Category & Sort */}
-      <div className="bg-[#F9E4CB] py-4 border-b border-[#e5d8cb]">
-        <div className="container mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-4">
+      {/* Header: Tag Name & Sort */}
+      <div className="bg-[#F3F4F6] py-8 border-b border-gray-200">
+        <div className="container mx-auto px-4 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
           
-          <div className="flex gap-8 overflow-x-auto no-scrollbar py-1">
-            <button
-              onClick={() => {
-                setActiveCategoryName("All Product");
-                updateFilters({ category: null, page: 1 });
-              }}
-              className={`text-[11px] font-bold uppercase tracking-[0.15em] transition-all whitespace-nowrap pb-1 ${
-                queryCategory === ""
-                  ? "text-black border-b border-black"
-                  : "text-gray-500 hover:text-black"
-              }`}
-            >
-              All Product
-            </button>
-            {categories.map((cat: any) => (
-              <button
-                key={cat._id}
-                onClick={() => {
-                  setActiveCategoryName(cat.name);
-                  updateFilters({ category: cat._id, page: 1 });
-                }}
-                className={`text-[11px] font-bold uppercase tracking-[0.15em] transition-all whitespace-nowrap pb-1 ${
-                  queryCategory === cat._id
-                    ? "text-black border-b border-black"
-                    : "text-gray-500 hover:text-black"
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-black">
+               <IoPricetagOutline size={24} />
+            </div>
+            <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Tag Collection</p>
+                <h1 className="text-2xl font-bold uppercase tracking-tighter text-gray-900">
+                   #{queryTag || "No Tag Selected"}
+                </h1>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest bg-white px-4 py-2 rounded-lg border border-gray-100 shadow-sm">
             <span className="text-gray-500">Sort :</span>
             <select
               value={querySort}
               onChange={(e) => updateFilters({ sort: e.target.value, page: 1 })}
               className="bg-transparent focus:outline-none cursor-pointer border-none outline-none font-bold"
             >
-              <option value="-createdAt">Featured</option>
+              <option value="-createdAt">Newest First</option>
               <option value="salePrice">Price: Low to High</option>
               <option value="-salePrice">Price: High to Low</option>
             </select>
@@ -139,7 +99,7 @@ const Shop = () => {
 
       <div className="container mx-auto px-4 md:px-12 mt-12">
         {loading ? (
-          /* Skeleton Loading State */
+          /* আপনার দেওয়া Skeleton Loading State */
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="flex flex-col gap-3">
@@ -158,7 +118,7 @@ const Shop = () => {
               ))}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination: আপনার শপ পেজের স্টাইল অনুযায়ী */}
             {totalPages > 1 && (
               <div className="mt-20 flex justify-center items-center gap-1">
                 <button
@@ -167,7 +127,7 @@ const Shop = () => {
                     updateFilters({ page: queryPage - 1 });
                     window.scrollTo(0, 0);
                   }}
-                  className="w-8 h-8 border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white disabled:opacity-30 transition-all text-xs"
+                  className="w-10 h-10 border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white disabled:opacity-30 transition-all text-sm"
                 >
                   ←
                 </button>
@@ -180,7 +140,7 @@ const Shop = () => {
                         updateFilters({ page: idx + 1 });
                         window.scrollTo(0, 0);
                       }}
-                      className={`w-8 h-8 border text-[10px] font-bold transition-all ${
+                      className={`w-10 h-10 border text-[11px] font-bold transition-all ${
                         queryPage === idx + 1
                           ? "bg-black text-white border-black"
                           : "text-gray-400 border-gray-200 hover:border-black"
@@ -197,7 +157,7 @@ const Shop = () => {
                     updateFilters({ page: queryPage + 1 });
                     window.scrollTo(0, 0);
                   }}
-                  className="w-8 h-8 border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white disabled:opacity-30 transition-all text-xs"
+                  className="w-10 h-10 border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white disabled:opacity-30 transition-all text-sm"
                 >
                   →
                 </button>
@@ -205,21 +165,22 @@ const Shop = () => {
             )}
           </>
         ) : (
-          /* Empty State */
+          /* Empty State: যখন কোনো প্রোডাক্ট পাওয়া যাবে না */
           <div className="h-96 flex flex-col justify-center items-center text-center">
-            <IoBagHandleOutline size={50} className="text-gray-200 mb-4" />
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                <IoBagHandleOutline size={40} className="text-gray-200" />
+            </div>
             <h3 className="text-lg font-bold text-gray-900 uppercase tracking-tighter">
               No products found
             </h3>
             <p className="text-gray-400 text-[11px] uppercase tracking-widest mt-2 max-w-xs">
-              Sorry, we couldnt find any products in the {activeCategoryName}
-              category.
+              We couldn't find any products tagged with "{queryTag}".
             </p>
             <button
-              onClick={() => updateFilters({ category: null, page: 1 })}
+              onClick={() => router.push('/shop')}
               className="mt-6 text-[10px] font-bold uppercase tracking-widest border-b border-black pb-1 hover:text-gray-500 hover:border-gray-500 transition-all"
             >
-              Browse all products
+              Back to Shop
             </button>
           </div>
         )}
@@ -228,4 +189,12 @@ const Shop = () => {
   );
 };
 
-export default Shop;
+const TagPage = () => {
+    return (
+        <Suspense fallback={<div className="container mx-auto px-12 mt-12 text-xs uppercase tracking-widest">Loading...</div>}>
+            <TagPageContent />
+        </Suspense>
+    );
+};
+
+export default TagPage;

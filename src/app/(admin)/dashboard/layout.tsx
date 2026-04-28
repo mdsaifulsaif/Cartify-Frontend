@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 "use client";
 
 import React, { useState, ReactNode } from "react";
@@ -17,6 +18,7 @@ import {
 import { useAuth } from "@/context/authContext";
 import toast from "react-hot-toast";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { useSettings } from "@/helper/useSettings";
 
 
 interface User {
@@ -37,12 +39,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logoutUser } = useAuth(); 
+    const { data: settings, isLoading } = useSettings();
 
   const menuItems = [
     { name: "Overview", icon: <IoStatsChartOutline />, path: "/dashboard" },
     { name: "Category", icon: <IoCubeOutline />, path: "/dashboard/category" },
     { name: "Products", icon: <IoCubeOutline />, path: "/dashboard/products" },
     { name: "Orders", icon: <IoCartOutline />, path: "/dashboard/orders" },
+    { name: "Analytics", icon: <IoCartOutline />, path: "/dashboard/analytics" },
     {
       name: "Customers",
       icon: <IoPeopleOutline />,
@@ -66,13 +70,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   const fullName = user ? `${user.firstName} ${user.lastName}` : "Admin";
+   if (isLoading) return <div>Loading logo...</div>;
 
   const SidebarContent = () => (
+    
     <div className="flex flex-col h-full bg-[#F9F3F5] p-6">
       <div className="mb-10 flex justify-center">
         <Link href="/">
           <img
-            src="/assets/logo.png"
+            src={settings?.logo}
             alt="Seoul Mirage"
             className="w-32 h-auto"
           />
