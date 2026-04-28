@@ -145,15 +145,15 @@ const ContactUsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="p-4 bg-white rounded-full"><FaRegEnvelope className="text-xl text-[#D1A0B0]" /></div>
-              <div><h4 className="font-bold text-sm uppercase tracking-tighter">Email</h4><p className="text-sm text-gray-600">hello@seoulmirage.com</p></div>
+              <div><h4 className="font-bold text-sm uppercase tracking-tighter">Email</h4><p className="text-sm text-gray-600">support@hr.com</p></div>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="p-4 bg-white rounded-full"><FaPhone className="text-xl text-[#D1A0B0]" /></div>
-              <div><h4 className="font-bold text-sm uppercase tracking-tighter">Phone</h4><p className="text-sm text-gray-600">+82 2 123 4567</p></div>
+              <div><h4 className="font-bold text-sm uppercase tracking-tighter">Phone</h4><p className="text-sm text-gray-600">+8801727841588</p></div>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="p-4 bg-white rounded-full"><FaMapMarkerAlt className="text-xl text-[#D1A0B0]" /></div>
-              <div><h4 className="font-bold text-sm uppercase tracking-tighter">Location</h4><p className="text-sm text-gray-600">123 Beauty Lane, Seoul</p></div>
+              <div><h4 className="font-bold text-sm uppercase tracking-tighter">Location</h4><p className="text-sm text-gray-600">Barisal-8200</p></div>
             </div>
           </div>
         </div>
