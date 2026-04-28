@@ -127,7 +127,7 @@ body {
   aspect-ratio: 1 / 1;
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   background-color: #f9f9f9;
 }
 

@@ -45,7 +45,7 @@ const CategorySection = async () => {
                 <Link
                   key={cat._id}
                   href={`/category/${cat._id}`}
-                  className="relative group cursor-pointer overflow-hidden aspect-square rounded-[8px]"
+                  className="relative group cursor-pointer overflow-hidden aspect-square "
                 >
                   <Image
                     src={cat.image}
