@@ -5,6 +5,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/authContext";
 import Providers from "@/context/providers";
 import { useSettings } from "@/helper/useSettings";
+import { BASE_URL } from "@/helper/BASE_URL";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -17,7 +18,7 @@ const raleway = Raleway({
 export async function generateMetadata(): Promise<Metadata> {
   try {
     // সরাসরি API থেকে ডাটা ফেচ করা (সার্ভার সাইড)
-    const res = await fetch("http://localhost:5001/api/v1/settings", {
+    const res = await fetch(`${BASE_URL}/settings`, {
       next: { revalidate: 60 }, // প্রতি ৬০ সেকেন্ড পর পর ডাটা আপডেট হবে
     });
     const { data: settings } = await res.json();
