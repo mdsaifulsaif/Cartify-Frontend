@@ -42,7 +42,7 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+// dad
   // ক্যাটাগরি ফেচ করা
   useEffect(() => {
     const fetchCategories = async () => {
