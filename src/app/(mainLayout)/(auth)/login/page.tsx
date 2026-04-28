@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
@@ -27,39 +28,6 @@ const Login = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
-  // const handleSubmit = async (e: FormEvent) => {
-  //   e.preventDefault();
-
-  //   const loadId = toast.loading("Signing in...");
-
-  //   try {
-  //     const response = await axios.post(`${BASE_URL}/auth/login`, formData, {
-  //       withCredentials: true,
-  //     });
-
-  //     console.log("Login Success Data:", response.data);
-
-  //     if (response.data.success) {
-  //       const userData = response.data.data;
-
-  //       loginUser(userData);
-  //       console.log("login data user ", userData)
-
-  //       toast.success("Login Successful!", { id: loadId });
-
-  //       if (userData?.user.role === "admin") {
-  //         router.push("/dashboard");
-  //       } else {
-  //         router.push("/");
-  //       }
-  //     }
-  //   } catch (error: any) {
-  //     console.error("Login Error:", error);
-  //     const message = error.response?.data?.message || "Login failed!";
-  //     toast.error(message, { id: loadId });
-  //   }
-  // };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
