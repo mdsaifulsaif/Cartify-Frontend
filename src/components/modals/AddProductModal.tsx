@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import slugify from "slugify";
 import React, { useState, ChangeEvent, FormEvent } from "react";
