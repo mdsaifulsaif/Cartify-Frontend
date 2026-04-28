@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import bannerfaq from "../../../../public/assets/faqbanner.jpg";
 
 const FAQ = () => {
-  // স্ক্রিনশটে ২য় আইটেমটি ওপেন দেখাচ্ছে (index 1)
+
   const [openIndex, setOpenIndex] = useState<number | null>(1);
 
   const faqs = [
@@ -43,7 +43,7 @@ const FAQ = () => {
   return (
       <section className="w-full py-15 md:py-10 bg-white">
           
-      <div className="container mx-auto grid md:grid-cols-2 md:gap-[130px] items-center">
+      <div className="container mx-auto grid md:grid-cols-2 md:gap-[130px] items-center md:px-0 px-5">
         
         {/* Left Side: Image Container */}
         <div className="relative max-w-177 aspect-[0.7] md:aspect-[684/969] overflow-hidden">
