@@ -90,7 +90,6 @@ const Navbar = () => {
   ];
 
   if (!isMounted) return null;
-
   return (
     <>
       {isScrolled && <div className="h-[72px] md:h-[84px]"></div>}
@@ -189,14 +188,6 @@ const Navbar = () => {
                     </div>
                     
                     <Link href="/my-account" className="block px-4 py-2 hover:bg-gray-50 text-[11px] font-medium text-gray-700">My Profile</Link>
-                    
-                    {/* Admin Dashboard Condition */}
-                    {(user.role === "admin") && (
-                      <Link href="/dashboard" className="block px-4 py-2 hover:bg-gray-50 text-[11px] font-bold text-black">
-                        Admin Dashboard
-                      </Link>
-                    )}
-
                     <button 
                       onClick={logoutUser} 
                       className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 text-[11px] font-bold uppercase tracking-tighter"
