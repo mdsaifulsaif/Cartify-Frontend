@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -12,10 +13,11 @@ const ContactUsPage = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(1);
   const [loading, setLoading] = useState(false);
 
-  
+
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
+    from_name: "", 
+    from_email: "", 
+    subject: "Customer Inquiry", 
     message: "",
   });
 
@@ -27,30 +29,31 @@ const ContactUsPage = () => {
     { id: 5, question: "How can I track my order?", answer: "Once your order ships, you will receive an email with a tracking number and a link to monitor your package's progress." },
   ];
 
-  // ইনপুট হ্যান্ডলার
+ 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // সাবমিট হ্যান্ডলার
+ 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.fullName || !formData.email || !formData.message) {
-      return toast.error("Please fill all fields");
+    if (!formData.from_name || !formData.from_email || !formData.message) {
+      return toast.error("Please fill all required fields");
     }
 
     try {
       setLoading(true);
       
-      const response = await axios.post(`${BASE_URL}/contact`, formData);
+    
+      const response = await axios.post(`${BASE_URL}/contact/send-email`, formData);
       
       if (response.data.success) {
         toast.success("Message sent successfully!");
-        setFormData({ fullName: "", email: "", message: "" }); 
+        setFormData({ from_name: "", from_email: "", subject: "Customer Inquiry", message: "" }); 
       }
     } catch (error: any) {
-      console.error("Contact Error:", error?.message);
+      console.error("Contact Error:", error?.response?.data?.message || error.message);
       toast.error("Something went wrong. Try again!");
     } finally {
       setLoading(false);
@@ -65,7 +68,7 @@ const ContactUsPage = () => {
           Contact Us
         </h1>
 
-        <div className="flex flex-col lg:row gap-16 lg:gap-24 lg:flex-row">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
           <div className="flex-1">
             <h2 className="text-xl font-bold text-[#1A1A1A] mb-3 uppercase tracking-wider">
               Get in Touch
@@ -79,8 +82,8 @@ const ContactUsPage = () => {
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] font-bold uppercase tracking-widest text-[#333]">Full Name</label>
                 <input
-                  name="fullName"
-                  value={formData.fullName}
+                  name="from_name" // name প্রপস আপডেট করা হয়েছে
+                  value={formData.from_name}
                   onChange={handleChange}
                   type="text"
                   placeholder="Enter your name"
@@ -91,8 +94,8 @@ const ContactUsPage = () => {
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] font-bold uppercase tracking-widest text-[#333]">Email Address</label>
                 <input
-                  name="email"
-                  value={formData.email}
+                  name="from_email" 
+                  value={formData.from_email}
                   onChange={handleChange}
                   type="email"
                   placeholder="Enter your email"
@@ -133,24 +136,21 @@ const ContactUsPage = () => {
         </div>
       </div>
 
-      {/* --- Connect Section (Beige) --- */}
+      {/* --- Connect Section --- */}
       <div className="bg-[#F2E6D9] py-20">
         <div className="container mx-auto px-4 md:px-8 lg:px-12 text-center md:text-left">
           <h2 className="text-xl font-bold text-[#1A1A1A] mb-12 uppercase tracking-wider">
             Connect With Us
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {/* Email */}
             <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="p-4 bg-white rounded-full"><FaRegEnvelope className="text-xl text-[#D1A0B0]" /></div>
               <div><h4 className="font-bold text-sm uppercase tracking-tighter">Email</h4><p className="text-sm text-gray-600">hello@seoulmirage.com</p></div>
             </div>
-            {/* Phone */}
             <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="p-4 bg-white rounded-full"><FaPhone className="text-xl text-[#D1A0B0]" /></div>
               <div><h4 className="font-bold text-sm uppercase tracking-tighter">Phone</h4><p className="text-sm text-gray-600">+82 2 123 4567</p></div>
             </div>
-            {/* Location */}
             <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="p-4 bg-white rounded-full"><FaMapMarkerAlt className="text-xl text-[#D1A0B0]" /></div>
               <div><h4 className="font-bold text-sm uppercase tracking-tighter">Location</h4><p className="text-sm text-gray-600">123 Beauty Lane, Seoul</p></div>
